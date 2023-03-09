@@ -10,17 +10,17 @@ const GraphQLDate = new GraphQLScalarType({
 	name: 'GraphQLDate',
 	description: 'A Date() type in GraphQL as a scalar',
 	serialize(value) {
-	  return value.toISOString();
+		return value.toISOString();
 	},
 	parseValue(value) {
-	  const dateValue = new Date(value);
-	  return isNaN(dateValue) ? undefined : dateValue;
+		const dateValue = new Date(value);
+		return isNaN(dateValue) ? undefined : dateValue;
 	},
 	parseLiteral(ast) {
-	  if (ast.kind == Kind.STRING) {
-		const value = new Date(ast.value);
-		return isNaN(value) ? undefined : value;
-	  }
+		if (ast.kind == Kind.STRING) {
+			const value = new Date(ast.value);
+			return isNaN(value) ? undefined : value;
+		}
 	},
 });
 
@@ -66,13 +66,21 @@ async function issueList() {
 	return issueDB;
 }
 
-function issueAdd(_, {newIssue}) {
-	newIssue.id = issueDB.length + 1;
-	newIssue.created = new Date();
-	if (newIssue.status == undefined) newIssue.status = 'New';
-	issueDB.push(newIssue);
+async function getNextSequence(name) { // to get next Id for newIssue
+	const result = await db.collection('issuesCounter').findOneAndUpdate(
+		{ _id: name },
+		{ $inc: { current: 1 } },
+		{ returnOriginal: false },
+	);
+	return result.value.current;
+}
 
-	return newIssue;
+async function issueAdd(_, { newIssue }) {
+	newIssue.id = await getNextSequence('issues');
+
+	const result = await db.collection('issues').insertOne(newIssue);
+	const savedIssue = await db.collection('issues').findOne({ _id: result.insertedId });
+	return savedIssue;
 }
 
 
@@ -103,11 +111,11 @@ server.applyMiddleware({ app, path: '/graphql' });
 
 (async function () {
 	try {
-	  await connectToDb();
-	  app.listen(3000, function () {
-		console.log('App started on port 3000');
-	  });
+		await connectToDb();
+		app.listen(3000, function () {
+			console.log('App started on port 3000');
+		});
 	} catch (err) {
-	  console.log('ERROR:', err);
+		console.log('ERROR:', err);
 	}
-  })();
+})();
