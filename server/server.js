@@ -83,7 +83,10 @@ async function connectToDb() {
 	await client.connect();
 	console.log('Connected to MongoDB at', url);
 	db = client.db();
-  }
+
+	// insert initial issues in db
+	db.collection('issues').insertMany(issueDB);
+}
 
 const server = new ApolloServer({
 	typeDefs: fs.readFileSync('./server/schema.graphql', 'utf-8'),
