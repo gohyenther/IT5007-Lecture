@@ -66,13 +66,14 @@ async function issueList() {
 	return issueDB;
 }
 
-var counter = 3; // for incrementing id of newIssue
+var issueCounter = initialIssues.length + 1; // for incrementing id of newIssue
+
 async function issueAdd(_, { newIssue }) {
 	newIssue.id = counter;
 	newIssue.status = 'New';
 	newIssue.created = new Date();
 
-	counter = counter + 1;
+	issueCounter = issueCounter + 1;
 
 	const result = await db.collection('issues').insertOne(newIssue);
 	// savedIssue for confirmation
@@ -82,7 +83,7 @@ async function issueAdd(_, { newIssue }) {
 
 
 /*
-* Initialise mongoDB, express and middleware
+* Initialise mongoDB, express server and middleware
 */
 const url = 'mongodb://localhost/issuetracker';
 
