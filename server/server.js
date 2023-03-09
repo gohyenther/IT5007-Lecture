@@ -70,6 +70,7 @@ var counter = 3;
 async function issueAdd(_, { newIssue }) {
 	newIssue.id = counter;
 	newIssue.status = 'New';
+	newIssue.created = new Date();
 
 	counter = counter + 1;
 	
