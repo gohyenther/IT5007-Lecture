@@ -93,6 +93,7 @@ async function connectToDb() {
 	db = client.db();
 
 	// insert initial issues in db
+	db.dropDatabase();
 	db.collection('issues').insertMany(issueDB);
 }
 
