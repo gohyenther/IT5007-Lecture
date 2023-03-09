@@ -69,7 +69,10 @@ async function issueList() {
 var counter = 3;
 async function issueAdd(_, { newIssue }) {
 	newIssue.id = counter;
+	newIssue.status = 'New';
+
 	counter = counter + 1;
+	
 	const result = await db.collection('issues').insertOne(newIssue);
 	const savedIssue = await db.collection('issues').findOne({ _id: result.insertedId });
 	return savedIssue;
