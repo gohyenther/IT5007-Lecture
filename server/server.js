@@ -61,7 +61,8 @@ const resolvers = {
 
 
 /* Functions in resolvers */
-function issueList() {
+async function issueList() {
+	const issueDB = await db.collection('issues').find({}).toArray();
 	return issueDB;
 }
 
