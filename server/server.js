@@ -66,18 +66,10 @@ async function issueList() {
 	return issueDB;
 }
 
-async function getNextSequence(name) { // to get next Id for newIssue
-	const result = await db.collection('issuesCounter').findOneAndUpdate(
-		{ _id: name },
-		{ $inc: { current: 1 } },
-		{ returnOriginal: false },
-	);
-	return result.value.current;
-}
-
+var counter = 3;
 async function issueAdd(_, { newIssue }) {
-	newIssue.id = await getNextSequence('issues');
-
+	newIssue.id = counter;
+	counter = counter + 1;
 	const result = await db.collection('issues').insertOne(newIssue);
 	const savedIssue = await db.collection('issues').findOne({ _id: result.insertedId });
 	return savedIssue;
