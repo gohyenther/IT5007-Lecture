@@ -25,8 +25,8 @@ const GraphQLDate = new GraphQLScalarType({
 });
 
 
-/* Internal DB in server.js */
-const issueDB = [
+/* initial issues in server.js, will be used to insert into mongoDB later */
+const initialIssues = [
 	{
 		id: 1,
 		status: 'New',
@@ -66,20 +66,24 @@ async function issueList() {
 	return issueDB;
 }
 
-var counter = 3;
+var counter = 3; // for incrementing id of newIssue
 async function issueAdd(_, { newIssue }) {
 	newIssue.id = counter;
 	newIssue.status = 'New';
 	newIssue.created = new Date();
 
 	counter = counter + 1;
-	
+
 	const result = await db.collection('issues').insertOne(newIssue);
+	// savedIssue for confirmation
 	const savedIssue = await db.collection('issues').findOne({ _id: result.insertedId });
 	return savedIssue;
 }
 
 
+/*
+* Initialise mongoDB, express and middleware
+*/
 const url = 'mongodb://localhost/issuetracker';
 
 async function connectToDb() {
@@ -88,9 +92,10 @@ async function connectToDb() {
 	console.log('Connected to MongoDB at', url);
 	db = client.db();
 
-	// insert initial issues in db
+	// restart: drop all database first
 	db.dropDatabase();
-	db.collection('issues').insertMany(issueDB);
+	// restart: insert initialIssues into database
+	db.collection('issues').insertMany(initialIssues);
 }
 
 const server = new ApolloServer({
