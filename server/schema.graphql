@@ -1,0 +1,28 @@
+scalar GraphQLDate
+
+type Issue {
+    id: Int!
+    title: String!
+    status: String!
+    owner: String!
+    effort: Int
+    created: GraphQLDate!
+    due: GraphQLDate
+}
+
+input IssueInput {
+    title: String!
+    "Below are optional"
+    status: String
+    owner: String
+    effort: Int
+    due: GraphQLDate
+}
+
+type Query {
+    issueList: [Issue!]!
+}
+
+type Mutation {
+    issueAdd(newIssue: IssueInput!): Issue!
+}

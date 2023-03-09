@@ -4,7 +4,9 @@
   "description": "NUS IT5007",
   "main": "index.js",
   "dependencies": {
+    "apollo-server-express": "^2.26.1",
     "express": "^4.18.2",
+    "graphql": "^0.13.2",
     "nodemon": "^2.0.20"
   },
   "devDependencies": {
